@@ -27,12 +27,22 @@ import java.nio.channels.ReadableByteChannel;
 import org.springframework.lang.Nullable;
 
 /**
- * Interface for a resource descriptor that abstracts from the actual
- * type of underlying resource, such as a file or class path resource.
+ * Interface for a resource descriptor that abstracts from the actual type of underlying resource, such as a file or class path resource.
+ * 接口的资源描述符提取的实际类型的潜在资源,如文件或类路径的资源。
  *
  * <p>An InputStream can be opened for every resource if it exists in
  * physical form, but a URL or File handle can just be returned for
  * certain resources. The actual behavior is implementation-specific.
+ * 一个输入流可以打开每个资源如果它存在于物质形态,但一个URL或文件句柄就可以返回
+ * 某些资源。实际的行为是实现——具体。
+ *
+ * 在学 Java SE 的时候，我们学习了一个标准类 java.net.URL，该类在 Java SE 中的定位为统一资源定位器（Uniform Resource Locator），
+ * 但是我们知道它的实现基本只限于网络形式发布的资源的查找和定位。
+ * 然而，实际上资源的定义比较广泛，除了网络形式的资源，还有以二进制形式存在的、以文件形式存在的、以字节流形式存在的等等。
+ * 而且它可以存在于任何场所，比如网络、文件系统、应用程序中。所以 java.net.URL 的局限性迫使 Spring 必须实现自己的资源加载策略，该资源加载策略需要满足如下要求：
+ *
+ * 职能划分清楚。资源的定义和资源的加载应该要有一个清晰的界限；
+ * 统一的抽象。统一的资源定义和资源加载策略。资源加载后要返回统一的抽象给客户端，客户端要对资源进行怎样的处理，应该由抽象资源接口来界定。
  *
  * @author Juergen Hoeller
  * @since 28.12.2003
@@ -56,6 +66,8 @@ public interface Resource extends InputStreamSource {
 	 * <p>This method performs a definitive existence check, whereas the
 	 * existence of a {@code Resource} handle only guarantees a valid
 	 * descriptor handle.
+	 *
+	 * 资源是否存在
 	 */
 	boolean exists();
 
@@ -79,6 +91,8 @@ public interface Resource extends InputStreamSource {
 	 * If {@code true}, the InputStream cannot be read multiple times,
 	 * and must be read and closed to avoid resource leaks.
 	 * <p>Will be {@code false} for typical resource descriptors.
+	 *
+	 * 资源所代表的句柄是否被一个 stream 打开了
 	 */
 	default boolean isOpen() {
 		return false;
@@ -100,6 +114,8 @@ public interface Resource extends InputStreamSource {
 	 * Return a URL handle for this resource.
 	 * @throws IOException if the resource cannot be resolved as URL,
 	 * i.e. if the resource is not available as a descriptor
+	 *
+	 * 返回资源的 URL 的句柄
 	 */
 	URL getURL() throws IOException;
 
